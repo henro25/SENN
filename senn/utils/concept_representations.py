@@ -23,16 +23,27 @@ def highest_activations(model, test_loader, num_concepts=5, num_prototypes=9, sa
     save_path: str
         Path to the location where the bar plot should be saved.
     """
+    device = 'cuda:0' if next(model.parameters()).is_cuda else 'cpu'
     model.eval()
     activations = []
     for x, _ in test_loader:
-        x = x.float().to("cuda:0" if next(model.parameters()).is_cuda else "cpu")
+        x = x.float().to(device)
         with torch.no_grad():
             _, (concepts, _), _ = model(x)
             activations.append(concepts.squeeze())
     activations = torch.cat(activations)
 
     _, top_test_idx = torch.topk(activations, num_prototypes, 0)
+    
+    # Move top_test_idx to CPU if it's on GPU
+    top_test_idx = top_test_idx.cpu()
+    
+    # Ensure dataset.data is also a tensor
+    dataset_data = test_loader.dataset.data
+    
+    # Check if dataset_data is a tensor and move to CPU if needed
+    if isinstance(dataset_data, torch.Tensor):
+        dataset_data = dataset_data.cpu()
 
     top_examples = [test_loader.dataset.data[top_test_idx[:, concept]] for concept in range(num_concepts)]
     # flatten list and ensure correct image shape
@@ -89,6 +100,16 @@ def highest_contrast(model, test_loader, num_concepts=5, num_prototypes=9, save_
     contrast_scores[:, num_concepts - 1] = activations[:, num_concepts - 1] - activations[:, :num_concepts - 1].sum(dim=1)
 
     _, top_test_idx = torch.topk(contrast_scores, num_prototypes, 0)
+    
+    # Move top_test_idx to CPU if it's on GPU
+    top_test_idx = top_test_idx.cpu()
+    
+    # Ensure dataset.data is also a tensor
+    dataset_data = test_loader.dataset.data
+    
+    # Check if dataset_data is a tensor and move to CPU if needed
+    if isinstance(dataset_data, torch.Tensor):
+        dataset_data = dataset_data.cpu()
 
     top_examples = [test_loader.dataset.data[top_test_idx[:, concept]] for concept in range(num_concepts)]
     # flatten list and ensure correct image shape

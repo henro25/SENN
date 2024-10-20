@@ -11,7 +11,7 @@ def main():
     Binds together the config and the Trainer class
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument('--config', default="configs/compas_lambda1e-4_seed111111.json", help='experiment config file')
+    parser.add_argument('--config', default="configs/mnist_lambda1e-3_seed29_cuda.json", help='experiment config file')
     args = parser.parse_args()
 
     trainer = init_trainer(args.config)

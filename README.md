@@ -3,12 +3,15 @@
 This repository contains the code for reproducing the paper ``Towards Robust Interpretability with Self-Explaining Neural Networks''[1] and extending it. The authors propose a framework called SENN (Self-Explaining Neural Network) which is transparent by design. We study the reproducibilty and validity of the proposed framework. Several weaknesses of the approach are identified. Most notably, we find that the model rarely generates good explanations, and that performance is compromised more than reported by the authors when enforcing explanations to be stable.  We put forward improvements to the framework that address these weaknesses in a principled way, and show them to enhance the interpretability of generated explanations.
 
 ## Table of Contents
-  1. [Project Structure](#project-structure)
-  2. [How to run?](#how-to-run)
-  3. [Results](#results)
-  4. [Documentation](#documentation)
-  5. [Authors](#authors)
-  6. [References](#references)
+- [Self-Explaining Neural Networks: A review with extensions](#self-explaining-neural-networks-a-review-with-extensions)
+  - [Table of Contents](#table-of-contents)
+  - [Project Structure](#project-structure)
+  - [How to run?](#how-to-run)
+  - [Results](#results)
+  - [Documentation](#documentation)
+  - [Authors](#authors)
+  - [References](#references)
+  - [Henry Changes](#henry-changes)
 
 ## Project Structure
 <img src="images/UML-SENN.png" alt="Project Structure" width="720">
@@ -19,7 +22,7 @@ This repository contains the code for reproducing the paper ``Towards Robust Int
 ```
  git clone https://github.com/AmanDaVinci/SENN
  cd senn
- conda env create -f "environment.yml
+ conda env create -f "environment.yml"
  conda activate senn
 ```
 
@@ -63,7 +66,7 @@ Where *config.json* is prepared according to the template below:
   "robustness_loss": "compas_robustness_loss",  (str, the name of the robustness loss function from the losses package)
   "robust_reg": 1e-1,                           (float, the robustness regularization hyperparameter)
   "concept_reg": 1,                             (float, the concept regularization hyperparameter)
-  "sparsity_reg": 2e-5,                         (float, the sparsity regularization hyperparameter)
+  "sparsity_reg": 2e-5, $$                        (float, the sparsity regularization hyperparameter)
   "manual_seed": 42                             (int, the seed to be used for reproducibility)
   "accuracy_vs_lambda": ['c1.json','c2.json']   (list of str or list of lists where the inner lists need to have the same lengths, containing the name of the config files for the accuracy vs lambda plots)
   "num_seeds": 1                                (int, number of seeds used for the accuracy_vs_lambda plot, needs to be equal to the lengths of the inner lists passed in accuracy_vs_lambda, default = 1)
@@ -96,3 +99,10 @@ Simon Passenheim
 "Towards Robust Interpretability with Self-Explaining Neural Networks" NIPS 2018  
 [2] Irina Higgins, et al.  
 ”β-VAE: Learning basic visual concepts with a constrained variational framework.” ICLR 2017. 
+
+## Henry Changes
+
+1. `main.py` - changed: `parser.add_argument('--config', default="configs/mnist_lambda1e-3_seed29_cuda.json", help='experiment config file')`
+2. In `configs/` directory, added `mnist_lambda1e-3_seed29_cuda.json` and `compas_lambda1e-3_seed333_cuda.json`
+3. In `utils/concept_representations.py`, added cuda functionality when adding: `    device = 'cuda:0' if next(model.parameters()).is_cuda else 'cpu'`
+   

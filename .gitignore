@@ -451,4 +451,9 @@ TSWLatexianTemp*
 # glossaries
 *.glstex
 
+### Henry Added: DS_Stores ###
+.DS_Store
+docs/.DS_Store
+senn/.DS_Store
+
 # End of https://www.gitignore.io/api/latex,jupyternotebooks
